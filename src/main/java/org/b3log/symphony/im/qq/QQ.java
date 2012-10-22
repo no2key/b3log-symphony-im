@@ -32,7 +32,7 @@ import org.json.JSONObject;
  * QQ.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Feb 22, 2011
+ * @version 1.0.0.2, Oct 22, 2012
  */
 public final class QQ implements IMClient {
 
@@ -51,11 +51,15 @@ public final class QQ implements IMClient {
     /**
      * Login URL.
      */
-    private static final URL LOGIN_URL;
+    private static final String LOGIN_URL = "http://pt.3g.qq.com/handleLogin?vdata=";
     /**
      * SID.
      */
     private String sid;
+    /**
+     * VData.
+     */
+    private String vdata;
     /**
      * Server number.
      */
@@ -79,14 +83,6 @@ public final class QQ implements IMClient {
         setLoginAccount(loginAccount);
         setLoginPwd(loginPwd);
     }
-
-    static {
-        try {
-            LOGIN_URL = new URL("http://pt.3g.qq.com/handleLogin");
-        } catch (final MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-    }
     /**
      * Loin URL.
      */
@@ -94,7 +90,7 @@ public final class QQ implements IMClient {
 
     static {
         try {
-            NLOGIN_URL = new URL("http://pt.3g.qq.com/s?aid=nLogin3gqq");
+            NLOGIN_URL = new URL("http://pt.3g.qq.com/s?aid=nLogin");
         } catch (final MalformedURLException e) {
             throw new RuntimeException(e);
         }
@@ -105,17 +101,32 @@ public final class QQ implements IMClient {
      *
      * @return SID, returns {@code null} if failed
      */
-    public String getSID() {
+    public String getFirstSID() {
         final String result = httpClient.get(NLOGIN_URL);
 
         LOGGER.log(Level.FINE, "QQ sid result[{0}]", result);
 
-        if (Strings.isEmptyOrNull(result)
-            || midString(result, "sid=", "==").equals("")) {
+        if (Strings.isEmptyOrNull(result)) {
             return null;
         }
 
-        return midString(result, "sid=", "==") + "==";
+        final int sidValueIdx = result.indexOf("name=\"sid\" value=\"");
+        if (-1 == sidValueIdx) {
+            return null;
+        }
+
+        final int vdataValueIdx = result.indexOf("handleLogin?vdata=");
+        if (-1 == vdataValueIdx) {
+            return null;
+        }
+
+        int start = vdataValueIdx + "handleLogin?vdata=".length();
+        int end = start + 32;
+        vdata = result.substring(start, end);
+
+        start = sidValueIdx + "name=\"sid\" value=\"".length();
+        end = start + 24;
+        return result.substring(start, end);
     }
 
     /**
@@ -128,8 +139,8 @@ public final class QQ implements IMClient {
      * @return middle string, returns an empty string if not found
      */
     public static String midString(final String source,
-                                   final String start,
-                                   final String end) {
+            final String start,
+            final String end) {
         final int apos = source.indexOf(start);
         final int bpos = source.indexOf(end, apos + start.length());
 
@@ -145,13 +156,20 @@ public final class QQ implements IMClient {
         LOGGER.log(Level.INFO, "Login QQ robot[qqNumber={0}]", loginAccount);
         final JSONObject ret = new JSONObject();
         try {
-            sid = getSID();
+            sid = getFirstSID();
+            if (null == sid) {
+                ret.put(Keys.STATUS_CODE, false);
+                ret.put(Keys.MSG, "Not found sid");
+
+                return ret;
+            }
+
             final String result =
-                    httpClient.post(LOGIN_URL,
-                                    "sid=" + sid
-                                    + "&qq=" + loginAccount + "&pwd="
-                                    + loginPwd
-                                    + "&bid_code=3GQQ&modifySKey=0&toQQchat=true&loginType=1&aid=nLoginHandle");
+                    httpClient.post(new URL(LOGIN_URL + vdata),
+                    "sid=" + sid
+                    + "&qq=" + loginAccount + "&pwd="
+                    + loginPwd
+                    + "&bid_code=3GQQ&modifySKey=0&toQQchat=true&loginType=1&aid=nLoginHandle");
 
             if (-1 != result.indexOf("错误，请输入正确的QQ号码")) {
                 ret.put(Keys.STATUS_CODE, false);
@@ -161,7 +179,7 @@ public final class QQ implements IMClient {
             }
 
             if (-1 != result.indexOf("登录密码错误")
-                && -1 != result.indexOf("字母大小写")) {
+                    && -1 != result.indexOf("字母大小写")) {
                 ret.put(Keys.STATUS_CODE, false);
                 ret.put(Keys.MSG, "Wrong login password");
 
@@ -169,7 +187,7 @@ public final class QQ implements IMClient {
             }
 
             final String serverNum = midString(result, "ontimer=\"http://",
-                                               ".3g.qq.com");
+                    ".3g.qq.com");
             if (serverNum.equals("")) {
                 ret.put(Keys.STATUS_CODE, false);
                 ret.put(Keys.MSG, "Not found server");
@@ -181,7 +199,7 @@ public final class QQ implements IMClient {
             sid = midString(result, "?aid=nqqchatMain&amp;sid=", "&amp;");
 
             LOGGER.log(Level.INFO, "Logged in QQ[qqNumber={0}, loginResult={1}]",
-                       new Object[]{getLoginAccount(), result});
+                    new Object[]{getLoginAccount(), result});
 
             ret.put(Keys.STATUS_CODE, true);
 
@@ -206,29 +224,29 @@ public final class QQ implements IMClient {
     public JSONObject send(final JSONObject message) {
         final JSONObject ret = new JSONObject();
 
-        String result = null;
-        String toAccount = null;
-        String messageContent = null;
+        String result;
+        String toAccount;
+        String messageContent;
         try {
             final URL sendURL = new URL("http://" + serverNumber
-                                        + ".3g.qq.com/g/s?sid=" + sid
-                                        + "&aid=sendmsg&tfor=qq");
+                    + ".3g.qq.com/g/s?sid=" + sid
+                    + "&aid=sendmsg&tfor=qq");
             toAccount = message.getString(Message.MESSAGE_TO_ACCOUNT);
             messageContent = message.getString(Message.MESSAGE_CONTENT);
             result = httpClient.post(
                     sendURL, "msg=" + URLEncoder.encode(messageContent, "UTF-8")
-                             + "&u=" + toAccount + "&saveURL=0&do=send&on=1");
+                    + "&u=" + toAccount + "&saveURL=0&do=send");
 
             if (-1 != result.indexOf("发送成功")) {
                 LOGGER.log(Level.INFO,
-                           "Sent message to QQ[qqNumber={0}, content={1}] succeeded",
-                           new Object[]{toAccount, messageContent});
+                        "Sent message to QQ[qqNumber={0}, content={1}] succeeded",
+                        new Object[]{toAccount, messageContent});
 
                 ret.put(Keys.STATUS_CODE, true);
             } else {
                 LOGGER.log(Level.INFO,
-                           "Sent message to QQ[qqNumber={0}, content={1}] failed",
-                           new Object[]{toAccount, messageContent});
+                        "Sent message to QQ[qqNumber={0}, content={1}] failed",
+                        new Object[]{toAccount, messageContent});
                 ret.put(Keys.STATUS_CODE, false);
                 ret.put(Keys.MSG, "Unknown reason");
             }

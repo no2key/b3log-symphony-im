@@ -28,6 +28,7 @@ import org.b3log.symphony.im.Message;
 import org.b3log.symphony.im.qq.QQ;
 import org.b3log.symphony.im.util.Strings;
 import org.b3log.symphony.im.util.Symphonys;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -55,12 +56,29 @@ public final class AddMessageServlet extends HttpServlet {
 
     static {
         QQ_ROBOT1 = new QQ(Symphonys.get("qqRobot1Account"),
-                           Symphonys.get("qqRobot1Pwd"));
+                Symphonys.get("qqRobot1Pwd"));
     }
 
+    /**
+     * Sends message.
+     * 
+     * <pre>
+     * {
+     *     "key": "key of symphony",
+     *     "messageProcessor": "QQ",
+     *     "messageContent": "",
+     *     "messageToAccounts": ["", "", ....]
+     * }
+     * </pre>
+     * 
+     * @param request the specified request
+     * @param response the specified response
+     * @throws ServletException servlet exception
+     * @throws IOException io exception
+     */
     @Override
-    protected void doPost(final HttpServletRequest request,
-                          final HttpServletResponse response)
+    protected void doPut(final HttpServletRequest request,
+            final HttpServletResponse response)
             throws ServletException, IOException {
         JSONObject data = null;
         try {
@@ -83,19 +101,21 @@ public final class AddMessageServlet extends HttpServlet {
             }
 
             final String msgContent = data.getString(Message.MESSAGE_CONTENT);
-            final String msgToAccount =
-                    data.getString(Message.MESSAGE_TO_ACCOUNT);
+            final JSONArray msgToAccounts = data.optJSONArray(Message.MESSAGE_TO_ACCOUNTS);
 
             if (!QQ_ROBOT1.isLoggedIn()) {
                 QQ_ROBOT1.login();
             }
 
             LOGGER.log(Level.FINER, "Message[content={0}]", msgContent);
-            final JSONObject message = new JSONObject();
-            message.put(Message.MESSAGE_CONTENT, msgContent);
-            message.put(Message.MESSAGE_TO_ACCOUNT, msgToAccount);
 
-            QQ_ROBOT1.send(message);
+            for (int i = 0; i < msgToAccounts.length(); i++) {
+                final JSONObject message = new JSONObject();
+                message.put(Message.MESSAGE_CONTENT, msgContent);
+                message.put(Message.MESSAGE_TO_ACCOUNT, msgToAccounts.get(i));
+
+                QQ_ROBOT1.send(message);
+            }
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -113,7 +133,7 @@ public final class AddMessageServlet extends HttpServlet {
     private String toJSONString(final HttpServletRequest request)
             throws IOException, JSONException {
         request.setCharacterEncoding("UTF-8");
-        
+
         final StringBuilder sb = new StringBuilder();
         BufferedReader reader = null;
         try {

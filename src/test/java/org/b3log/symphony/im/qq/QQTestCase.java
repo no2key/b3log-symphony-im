@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
  * {@link QQ} test case.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Oct 22, 2012
+ * @version 1.0.0.3, Oct 22, 2012
  */
 public final class QQTestCase {
 
@@ -46,8 +46,8 @@ public final class QQTestCase {
         Assert.assertTrue(loginResult.getBoolean(Keys.STATUS_CODE));
 
         final JSONObject message = new JSONObject();
-        message.put(Message.MESSAGE_TO_ACCOUNT, "845765");
-        message.put(Message.MESSAGE_CONTENT, "Test!");
+        message.put(Message.MESSAGE_TO_ACCOUNTS, "845765");
+        message.put(Message.MESSAGE_CONTENT, "终于调试通了。。。。");
 
         final JSONObject sendResult = qq.send(message);
 

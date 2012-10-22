@@ -19,7 +19,7 @@ package org.b3log.symphony.im;
  * This class defines all instant message model relevant keys.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Feb 21, 2011
+ * @version 1.0.0.1, Oct 22, 2012
  */
 public final class Message {
 
@@ -39,6 +39,10 @@ public final class Message {
      * Key of message to account.
      */
     public static final String MESSAGE_TO_ACCOUNT = "messageToAccount";
+    /**
+     * Key of message to accounts.
+     */
+    public static final String MESSAGE_TO_ACCOUNTS = "messageToAccounts";
     /**
      * Key of message processor.
      */

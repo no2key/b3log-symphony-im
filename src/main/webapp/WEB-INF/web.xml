@@ -37,6 +37,6 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>AddMessageServlet</servlet-name>
-        <url-pattern>/msg/add</url-pattern>
+        <url-pattern>/msgs</url-pattern>
     </servlet-mapping>
 </web-app>

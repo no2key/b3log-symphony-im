@@ -31,7 +31,7 @@ import org.b3log.symphony.im.util.Strings;
  * A very simple HTTP client for instant messenger.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Feb 22, 2011
+ * @version 1.0.0.2, Oct 22, 2012
  */
 public final class HTTPClient {
 
@@ -61,19 +61,13 @@ public final class HTTPClient {
             httpConn.setReadTimeout(timeout);
             httpConn.setRequestMethod("GET");
             httpConn.setRequestProperty("Host", url.getHost());
-//            httpConn.setRequestProperty("User-Agent",
-//                                        "Mozilla/5.0 (Linux; U; Android 2.2; en-us; "
-//                                        + "Nexus One Build/FRF91) AppleWebKit/533.1 "
-//                                        + "(KHTML, like Gecko) Version/4.0 Mobile "
-//                                        + "Safari/533.1");
-            httpConn.setRequestProperty("User-Agent",
-                                        "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)");
+            httpConn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; rv:14.0) Gecko/20100101 Firefox/14.0.1");
             httpConn.setRequestProperty("Accept",
-                                        "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+                    "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
             httpConn.setRequestProperty("Accept-Language", "zh-cn,zh;q=0.5");
             httpConn.setRequestProperty("Accept-Encoding", "gzip,deflate");
             httpConn.setRequestProperty("Accept-Charset",
-                                        "UTF-8;q=0.7,*;q=0.7");
+                    "UTF-8;q=0.7,*;q=0.7");
             if (!getCookie().equals("")) {
                 httpConn.setRequestProperty("Cookie", "" + getCookie() + ";");
             }
@@ -126,19 +120,13 @@ public final class HTTPClient {
             httpConn.setReadTimeout(timeout);
             httpConn.setRequestMethod("GET");
             httpConn.setRequestProperty("Host", url.getHost());
-//            httpConn.setRequestProperty("User-Agent",
-//                                        "Mozilla/5.0 (Linux; U; Android 2.2; en-us; "
-//                                        + "Nexus One Build/FRF91) AppleWebKit/533.1 "
-//                                        + "(KHTML, like Gecko) Version/4.0 Mobile "
-//                                        + "Safari/533.1");
-            httpConn.setRequestProperty("User-Agent",
-                                        "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)");
+            httpConn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; rv:14.0) Gecko/20100101 Firefox/14.0.1");
             httpConn.setRequestProperty("Accept",
-                                        "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+                    "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
             httpConn.setRequestProperty("Accept-Language", "zh-cn,zh;q=0.5");
             httpConn.setRequestProperty("Accept-Encoding", "gzip,deflate");
             httpConn.setRequestProperty("Accept-Charset",
-                                        "UTF-8;q=0.7,*;q=0.7");
+                    "UTF-8;q=0.7,*;q=0.7");
             if (!(getCookie().equals(""))) {
                 httpConn.setRequestProperty("Cookie", "" + getCookie() + ";");
             }
@@ -186,19 +174,13 @@ public final class HTTPClient {
             httpConn.setReadTimeout(timeout);
             httpConn.setRequestMethod("POST");
             httpConn.setRequestProperty("Host", url.getHost());
-//            httpConn.setRequestProperty("User-Agent",
-//                                        "Mozilla/5.0 (Linux; U; Android 2.2; en-us; "
-//                                        + "Nexus One Build/FRF91) AppleWebKit/533.1 "
-//                                        + "(KHTML, like Gecko) Version/4.0 Mobile "
-//                                        + "Safari/533.1");
-            httpConn.setRequestProperty("User-Agent",
-                                        "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)");
+//        httpConn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; rv:14.0) Gecko/20100101 Firefox/14.0.1");
             httpConn.setRequestProperty("Accept",
-                                        "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+                    "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
             httpConn.setRequestProperty("Accept-Language", "zh-cn,zh;q=0.5");
             httpConn.setRequestProperty("Accept-Encoding", "gzip,deflate");
             httpConn.setRequestProperty("Accept-Charset",
-                                        "UTF-8;q=0.7,*;q=0.7");
+                    "UTF-8;q=0.7,*;q=0.7");
             if (!(getCookie().equals(""))) {
                 httpConn.setRequestProperty("Cookie", "" + getCookie() + ";");
             }
@@ -207,9 +189,9 @@ public final class HTTPClient {
             httpConn.setRequestProperty("Connection", "keep-alive");
             httpConn.setRequestProperty("Cache-Control", "no-cache");
             httpConn.setRequestProperty("Content-Type",
-                                        "application/x-www-form-urlencoded");
+                    "application/x-www-form-urlencoded");
             httpConn.setRequestProperty("Content-Length",
-                                        String.valueOf(parmString.length()));
+                    String.valueOf(parmString.length()));
             httpConn.setDoOutput(true);
             httpConn.setDoInput(true);
             final OutputStreamWriter out =
