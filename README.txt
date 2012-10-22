@@ -1,8 +1,9 @@
-B3log Symphony is the B3log community.
+B3log Symphony IM is the B3log community instant messenger.
 
 Home: http://www.b3log.org
-Project: http://b3log-symphony.googlecode.com
+Project: https://github.com/b3log/b3log-symphony-im
 
-Relevant projects:
-B3log Rhythm: http://b3log-rhythm.googlecode.com
-B3log Solo: http://b3log-solo.googlecode.com
+Relevant Projects:
+B3log Rhythm: https://github.com/b3log/b3log-rhythm
+B3log Solo: https://github.com/b3log/b3log-solo/
+B3log Symphony: https://github.com/b3log/b3log-symphony/
