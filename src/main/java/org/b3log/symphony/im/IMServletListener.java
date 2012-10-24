@@ -15,13 +15,9 @@
  */
 package org.b3log.symphony.im;
 
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import org.b3log.symphony.im.action.AddMessageServlet;
 
 /**
  * B3log Symphony IM servlet listener.
@@ -47,10 +43,6 @@ public final class IMServletListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(final ServletContextEvent servletContextEvent) {
-        final Timer timer = new Timer();
-        timer.schedule(new QQRobotsLiveTask(),
-                       KEEP_QQ_ROBOTS_ALIVE_DELAY,
-                       QQ_ROBOTS_LIVE_PERIOD);
         LOGGER.info("Initialized the B3log Symphony IM context");
     }
 
@@ -60,23 +52,3 @@ public final class IMServletListener implements ServletContextListener {
     }
 }
 
-/**
- * Keeps all QQ robots alive.
- *
- * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Feb 22, 2011
- */
-class QQRobotsLiveTask extends TimerTask {
-
-    /**
-     * Logger.
-     */
-    private static final Logger LOGGER =
-            Logger.getLogger(QQRobotsLiveTask.class.getName());
-
-    @Override
-    public void run() {
-        AddMessageServlet.QQ_ROBOT1.login();
-        LOGGER.log(Level.INFO, "Relogged in all QQ robots....");
-    }
-}
