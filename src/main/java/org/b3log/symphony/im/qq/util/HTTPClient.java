@@ -15,9 +15,8 @@
  */
 package org.b3log.symphony.im.qq.util;
 
-import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -25,21 +24,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
 import org.b3log.symphony.im.util.Strings;
 
 /**
  * A very simple HTTP client for instant messenger.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Oct 22, 2012
+ * @version 1.0.1.2, Mar 28, 2014
  */
 public final class HTTPClient {
 
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(HTTPClient.class.getName());
+    private static final Logger LOGGER
+                                = Logger.getLogger(HTTPClient.class.getName());
+
     /**
      * Cookie.
      */
@@ -63,11 +64,11 @@ public final class HTTPClient {
             httpConn.setRequestProperty("Host", url.getHost());
             httpConn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; rv:14.0) Gecko/20100101 Firefox/14.0.1");
             httpConn.setRequestProperty("Accept",
-                    "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+                                        "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
             httpConn.setRequestProperty("Accept-Language", "zh-cn,zh;q=0.5");
             httpConn.setRequestProperty("Accept-Encoding", "gzip,deflate");
             httpConn.setRequestProperty("Accept-Charset",
-                    "UTF-8;q=0.7,*;q=0.7");
+                                        "UTF-8;q=0.7,*;q=0.7");
             if (!getCookie().equals("")) {
                 httpConn.setRequestProperty("Cookie", "" + getCookie() + ";");
             }
@@ -85,16 +86,16 @@ public final class HTTPClient {
             }
 
             final InputStream inputStream = httpConn.getInputStream();
-            final BufferedReader br =
-                    new BufferedReader(new InputStreamReader(inputStream));
-            String line = br.readLine();
-            final StringBuilder contentBuilder = new StringBuilder(line);
-            while (null != line) {
-                contentBuilder.append(line);
-                line = br.readLine();
+
+            final ByteArrayOutputStream out = new ByteArrayOutputStream();
+            GZIPInputStream gunzip = new GZIPInputStream(inputStream);
+            byte[] buffer = new byte[256];
+            int n;
+            while ((n = gunzip.read(buffer)) >= 0) {
+                out.write(buffer, 0, n);
             }
 
-            return new String(contentBuilder.toString().getBytes(), "UTF-8");
+            return out.toString("UTF-8");
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return null;
@@ -122,11 +123,11 @@ public final class HTTPClient {
             httpConn.setRequestProperty("Host", url.getHost());
             httpConn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; rv:14.0) Gecko/20100101 Firefox/14.0.1");
             httpConn.setRequestProperty("Accept",
-                    "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+                                        "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
             httpConn.setRequestProperty("Accept-Language", "zh-cn,zh;q=0.5");
             httpConn.setRequestProperty("Accept-Encoding", "gzip,deflate");
             httpConn.setRequestProperty("Accept-Charset",
-                    "UTF-8;q=0.7,*;q=0.7");
+                                        "UTF-8;q=0.7,*;q=0.7");
             if (!(getCookie().equals(""))) {
                 httpConn.setRequestProperty("Cookie", "" + getCookie() + ";");
             }
@@ -135,8 +136,8 @@ public final class HTTPClient {
             httpConn.setRequestProperty("Cache-Control", "no-cache");
             ret = new byte[httpConn.getContentLength()];
 
-            final String cookieString =
-                    getCookieString(httpConn.getHeaderFields());
+            final String cookieString
+                         = getCookieString(httpConn.getHeaderFields());
             if (!Strings.isEmptyOrNull(cookieString)) {
                 setCookie(cookieString.substring(0, cookieString.indexOf(";")));
             }
@@ -157,7 +158,7 @@ public final class HTTPClient {
      * Posts to the specified URL with the specified para string.
      *
      * <p>
-     *   <b>Note</b>: The para string MUST BE URL encoded.
+     * <b>Note</b>: The para string MUST BE URL encoded.
      * </p>
      *
      * @param url the specified URL
@@ -176,11 +177,11 @@ public final class HTTPClient {
             httpConn.setRequestProperty("Host", url.getHost());
 //        httpConn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; rv:14.0) Gecko/20100101 Firefox/14.0.1");
             httpConn.setRequestProperty("Accept",
-                    "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+                                        "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
             httpConn.setRequestProperty("Accept-Language", "zh-cn,zh;q=0.5");
             httpConn.setRequestProperty("Accept-Encoding", "gzip,deflate");
             httpConn.setRequestProperty("Accept-Charset",
-                    "UTF-8;q=0.7,*;q=0.7");
+                                        "UTF-8;q=0.7,*;q=0.7");
             if (!(getCookie().equals(""))) {
                 httpConn.setRequestProperty("Cookie", "" + getCookie() + ";");
             }
@@ -189,34 +190,33 @@ public final class HTTPClient {
             httpConn.setRequestProperty("Connection", "keep-alive");
             httpConn.setRequestProperty("Cache-Control", "no-cache");
             httpConn.setRequestProperty("Content-Type",
-                    "application/x-www-form-urlencoded");
+                                        "application/x-www-form-urlencoded");
             httpConn.setRequestProperty("Content-Length",
-                    String.valueOf(parmString.length()));
+                                        String.valueOf(parmString.length()));
             httpConn.setDoOutput(true);
             httpConn.setDoInput(true);
-            final OutputStreamWriter out =
-                    new OutputStreamWriter(httpConn.getOutputStream());
+            final OutputStreamWriter out
+                                     = new OutputStreamWriter(httpConn.getOutputStream());
             out.write(parmString);
             out.close();
 
-            final String cookieString =
-                    getCookieString(httpConn.getHeaderFields());
+            final String cookieString
+                         = getCookieString(httpConn.getHeaderFields());
             if (!Strings.isEmptyOrNull(cookieString)) {
                 setCookie(cookieString.substring(0, cookieString.indexOf(";")));
             }
 
             final InputStream inputStream = httpConn.getInputStream();
-            final BufferedReader br =
-                    new BufferedReader(new InputStreamReader(inputStream));
-            String line = br.readLine();
-            final StringBuilder contentBuilder = new StringBuilder(line);
-            while (null != line) {
-                contentBuilder.append(line);
-                line = br.readLine();
+          
+            final ByteArrayOutputStream responseStream = new ByteArrayOutputStream();
+            GZIPInputStream gunzip = new GZIPInputStream(inputStream);
+            byte[] buffer = new byte[256];
+            int n;
+            while ((n = gunzip.read(buffer)) >= 0) {
+                responseStream.write(buffer, 0, n);
             }
 
-            LOGGER.log(Level.FINEST, contentBuilder.toString());
-            return new String(contentBuilder.toString().getBytes(), "UTF-8");
+            return responseStream.toString("UTF-8");
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return null;

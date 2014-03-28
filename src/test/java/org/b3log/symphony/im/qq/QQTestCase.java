@@ -46,7 +46,7 @@ public final class QQTestCase {
         Assert.assertTrue(loginResult.getBoolean(Keys.STATUS_CODE));
 
         final JSONObject message = new JSONObject();
-        message.put(Message.MESSAGE_TO_ACCOUNTS, "845765");
+        message.put(Message.MESSAGE_TO_ACCOUNT, "845765");
         message.put(Message.MESSAGE_CONTENT, "终于调试通了。。。。");
 
         final JSONObject sendResult = qq.send(message);

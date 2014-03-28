@@ -171,17 +171,9 @@ public final class QQ implements IMClient {
                     + loginPwd
                     + "&bid_code=3GQQ&modifySKey=0&toQQchat=true&loginType=1&aid=nLoginHandle");
 
-            if (-1 != result.indexOf("错误，请输入正确的QQ号码")) {
+            if (-1 != result.indexOf("您输入的帐号或密码不正确，请重新输入")) {
                 ret.put(Keys.STATUS_CODE, false);
-                ret.put(Keys.MSG, "Wrong login account");
-
-                return ret;
-            }
-
-            if (-1 != result.indexOf("登录密码错误")
-                    && -1 != result.indexOf("字母大小写")) {
-                ret.put(Keys.STATUS_CODE, false);
-                ret.put(Keys.MSG, "Wrong login password");
+                ret.put(Keys.MSG, "您输入的帐号或密码不正确，请重新输入");
 
                 return ret;
             }
