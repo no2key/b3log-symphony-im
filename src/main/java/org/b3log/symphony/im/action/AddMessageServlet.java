@@ -107,7 +107,7 @@ public final class AddMessageServlet extends HttpServlet {
                 QQ_ROBOT1.login();
             }
 
-            LOGGER.log(Level.FINER, "Message[content={0}]", msgContent);
+            LOGGER.log(Level.INFO, "Message[content={0}]", msgContent);
 
             for (int i = 0; i < msgToAccounts.length(); i++) {
                 final JSONObject message = new JSONObject();
