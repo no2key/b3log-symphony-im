@@ -43,12 +43,14 @@ public final class AddMessageServlet extends HttpServlet {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(AddMessageServlet.class.getName());
+    private static final Logger LOGGER
+                                = Logger.getLogger(AddMessageServlet.class.getName());
+
     /**
      * Default serial version uid.
      */
     private static final long serialVersionUID = 1L;
+
     /**
      * QQ robot 1.
      */
@@ -56,12 +58,22 @@ public final class AddMessageServlet extends HttpServlet {
 
     static {
         QQ_ROBOT1 = new QQ(Symphonys.get("qqRobot1Account"),
-                Symphonys.get("qqRobot1Pwd"));
+                           Symphonys.get("qqRobot1Pwd"));
+    }
+
+    @Override
+    protected void doGet(final HttpServletRequest request,
+                         final HttpServletResponse response) {
+        try {
+            response.getWriter().println("Hello World!");
+        } catch (final Exception e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
     }
 
     /**
      * Sends message.
-     * 
+     *
      * <pre>
      * {
      *     "key": "key of symphony",
@@ -70,7 +82,7 @@ public final class AddMessageServlet extends HttpServlet {
      *     "messageToAccounts": ["", "", ....]
      * }
      * </pre>
-     * 
+     *
      * @param request the specified request
      * @param response the specified response
      * @throws ServletException servlet exception
@@ -78,7 +90,7 @@ public final class AddMessageServlet extends HttpServlet {
      */
     @Override
     protected void doPut(final HttpServletRequest request,
-            final HttpServletResponse response)
+                         final HttpServletResponse response)
             throws ServletException, IOException {
         JSONObject data = null;
         try {
@@ -92,8 +104,8 @@ public final class AddMessageServlet extends HttpServlet {
                 return;
             }
 
-            final String msgProcessor =
-                    data.getString(Message.MESSAGE_PROCESSOR);
+            final String msgProcessor
+                         = data.getString(Message.MESSAGE_PROCESSOR);
             if (!"QQ".equals(msgProcessor)) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN);
 
@@ -126,7 +138,7 @@ public final class AddMessageServlet extends HttpServlet {
      *
      * @param request the specified http servlet request
      * @return a json string if the specified http servlet request could convert,
-     *         otherwise, returns "{}"
+     * otherwise, returns "{}"
      * @throws IOException io exception
      * @throws JSONException json exception
      */
