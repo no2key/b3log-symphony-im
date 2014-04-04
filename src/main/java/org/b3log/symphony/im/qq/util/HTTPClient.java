@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
+import org.apache.commons.io.IOUtils;
 import org.b3log.symphony.im.util.Strings;
 
 /**
@@ -176,12 +177,10 @@ public final class HTTPClient {
             httpConn.setRequestMethod("POST");
             httpConn.setRequestProperty("Host", url.getHost());
 //        httpConn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; rv:14.0) Gecko/20100101 Firefox/14.0.1");
-            httpConn.setRequestProperty("Accept",
-                                        "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+            httpConn.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
             httpConn.setRequestProperty("Accept-Language", "zh-cn,zh;q=0.5");
             httpConn.setRequestProperty("Accept-Encoding", "gzip,deflate");
-            httpConn.setRequestProperty("Accept-Charset",
-                                        "UTF-8;q=0.7,*;q=0.7");
+            httpConn.setRequestProperty("Accept-Charset", "UTF-8;q=0.7,*;q=0.7");
             if (!(getCookie().equals(""))) {
                 httpConn.setRequestProperty("Cookie", "" + getCookie() + ";");
             }
@@ -189,36 +188,23 @@ public final class HTTPClient {
             httpConn.setRequestProperty("Keep-Alive", "300");
             httpConn.setRequestProperty("Connection", "keep-alive");
             httpConn.setRequestProperty("Cache-Control", "no-cache");
-            httpConn.setRequestProperty("Content-Type",
-                                        "application/x-www-form-urlencoded");
-            httpConn.setRequestProperty("Content-Length",
-                                        String.valueOf(parmString.length()));
+            httpConn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            httpConn.setRequestProperty("Content-Length", String.valueOf(parmString.length()));
             httpConn.setDoOutput(true);
             httpConn.setDoInput(true);
-            final OutputStreamWriter out
-                                     = new OutputStreamWriter(httpConn.getOutputStream());
+            final OutputStreamWriter out = new OutputStreamWriter(httpConn.getOutputStream());
             out.write(parmString);
             out.close();
 
-            final String cookieString
-                         = getCookieString(httpConn.getHeaderFields());
+            final String cookieString = getCookieString(httpConn.getHeaderFields());
             if (!Strings.isEmptyOrNull(cookieString)) {
                 setCookie(cookieString.substring(0, cookieString.indexOf(";")));
             }
 
-            final InputStream inputStream = httpConn.getInputStream();
-          
-            final ByteArrayOutputStream responseStream = new ByteArrayOutputStream();
-            GZIPInputStream gunzip = new GZIPInputStream(inputStream);
-            byte[] buffer = new byte[256];
-            int n;
-            while ((n = gunzip.read(buffer)) >= 0) {
-                responseStream.write(buffer, 0, n);
-            }
-
-            return responseStream.toString("UTF-8");
+            return IOUtils.toString(new GZIPInputStream(httpConn.getInputStream()), "UTF-8");
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
+
             return null;
         } finally {
             httpConn.disconnect();

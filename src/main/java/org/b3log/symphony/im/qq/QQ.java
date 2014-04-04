@@ -229,7 +229,7 @@ public final class QQ implements IMClient {
                     sendURL, "msg=" + URLEncoder.encode(messageContent, "UTF-8")
                     + "&u=" + toAccount + "&saveURL=0&do=send");
 
-            if (-1 != result.indexOf("发送成功")) {
+            if (null != result && -1 != result.indexOf("发送成功")) {
                 LOGGER.log(Level.INFO,
                         "Sent message to QQ[qqNumber={0}, content={1}] succeeded",
                         new Object[]{toAccount, messageContent});

@@ -33,33 +33,22 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Add message..
+ * Add message.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Feb 22, 2011
+ * @version 1.0.1.0, Apr 4, 2014
  */
 public final class AddMessageServlet extends HttpServlet {
 
     /**
      * Logger.
      */
-    private static final Logger LOGGER
-                                = Logger.getLogger(AddMessageServlet.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AddMessageServlet.class.getName());
 
     /**
      * Default serial version uid.
      */
     private static final long serialVersionUID = 1L;
-
-    /**
-     * QQ robot 1.
-     */
-    public static final QQ QQ_ROBOT1;
-
-    static {
-        QQ_ROBOT1 = new QQ(Symphonys.get("qqRobot1Account"),
-                           Symphonys.get("qqRobot1Pwd"));
-    }
 
     @Override
     protected void doGet(final HttpServletRequest request,
@@ -115,9 +104,7 @@ public final class AddMessageServlet extends HttpServlet {
             final String msgContent = data.getString(Message.MESSAGE_CONTENT);
             final JSONArray msgToAccounts = data.optJSONArray(Message.MESSAGE_TO_ACCOUNTS);
 
-            if (!QQ_ROBOT1.isLoggedIn()) {
-                QQ_ROBOT1.login();
-            }
+            final QQ qq = new QQ(Symphonys.get("qqRobot1Account"), Symphonys.get("qqRobot1Pwd"));
 
             LOGGER.log(Level.INFO, "Message[content={0}]", msgContent);
 
@@ -126,7 +113,7 @@ public final class AddMessageServlet extends HttpServlet {
                 message.put(Message.MESSAGE_CONTENT, msgContent);
                 message.put(Message.MESSAGE_TO_ACCOUNT, msgToAccounts.get(i));
 
-                QQ_ROBOT1.send(message);
+                qq.send(message);
             }
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);

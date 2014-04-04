@@ -37,7 +37,7 @@ public final class QQTestCase {
 
     /**
      * Tests methods {@linkplain QQ#login()} and {@linkplain QQ#send(org.json.JSONObject)}.
-     * 
+     *
      * @throws Exception exception
      */
     @Test
@@ -47,9 +47,8 @@ public final class QQTestCase {
 
         final JSONObject message = new JSONObject();
         message.put(Message.MESSAGE_TO_ACCOUNT, "845765");
-        message.put(Message.MESSAGE_CONTENT, "终于调试通了。。。。");
+        message.put(Message.MESSAGE_CONTENT, "B3log 社区 QQ 消息测试");
 
         final JSONObject sendResult = qq.send(message);
-
     }
 }
