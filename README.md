@@ -1,4 +1,4 @@
-Deprecated
+**Deprecated!**
 
 ====
 B3log Symphony IM is the B3log community instant messenger.
