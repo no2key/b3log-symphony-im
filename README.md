@@ -1,6 +1,9 @@
+Deprecated
+
+====
 B3log Symphony IM is the B3log community instant messenger.
 
-Home: http://www.b3log.org
+Home: http://b3log.org
 Project: https://github.com/b3log/b3log-symphony-im
 
 Relevant Projects:
